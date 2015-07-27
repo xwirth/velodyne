@@ -28,6 +28,8 @@ namespace velodyne_pointcloud
   {
     PCL_ADD_POINT4D;                    // quad-word XYZ
     float    intensity;                 ///< laser intensity reading
+    uint32_t stampLsb;
+    uint32_t stampMsb;
     uint16_t ring;                      ///< laser ring number
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW     // ensure proper alignment
   } EIGEN_ALIGN16;
@@ -40,6 +42,8 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(velodyne_pointcloud::PointXYZIR,
                                   (float, y, y)
                                   (float, z, z)
                                   (float, intensity, intensity)
+                                  (uint32_t, stampLsb, stampLsb)
+                                  (uint32_t, stampMsb, stampMsb)
                                   (uint16_t, ring, ring))
 
 #endif // __VELODYNE_POINTCLOUD_POINT_TYPES_H

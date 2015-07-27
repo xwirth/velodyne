@@ -163,9 +163,6 @@ namespace velodyne_rawdata
     velodyne_pointcloud::Calibration calibration_;
     float sin_rot_table_[ROTATION_MAX_UNITS];
     float cos_rot_table_[ROTATION_MAX_UNITS];
-    
-    /** add private function to handle the VLP16 **/ 
-    void unpack_vlp16(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc);
 
     /** in-line test whether a point is in range */
     bool pointInRange(float range)

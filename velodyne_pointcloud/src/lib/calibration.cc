@@ -39,67 +39,16 @@ namespace velodyne_pointcloud
   const std::string NUM_LASERS = "num_lasers";
   const std::string LASERS = "lasers";
   const std::string LASER_ID = "laser_id";
-  const std::string ROT_CORRECTION = "rot_correction";
   const std::string VERT_CORRECTION = "vert_correction";
-   const std::string DIST_CORRECTION = "dist_correction";
-  const std::string TWO_PT_CORRECTION_AVAILABLE =
-    "two_pt_correction_available";
-  const std::string DIST_CORRECTION_X = "dist_correction_x";
-  const std::string DIST_CORRECTION_Y = "dist_correction_y";
-  const std::string VERT_OFFSET_CORRECTION = "vert_offset_correction";
-  const std::string HORIZ_OFFSET_CORRECTION = "horiz_offset_correction";
-  const std::string MAX_INTENSITY = "max_intensity";
-  const std::string MIN_INTENSITY = "min_intensity";
-  const std::string FOCAL_DISTANCE = "focal_distance";
-  const std::string FOCAL_SLOPE = "focal_slope";
 
   void operator >> (const YAML::Node& node,
                     std::pair<int, LaserCorrection>& correction)
   {
     node[LASER_ID] >> correction.first;
-    node[ROT_CORRECTION] >> correction.second.rot_correction;
-    node[VERT_CORRECTION] >> correction.second.vert_correction;
-    node[DIST_CORRECTION] >> correction.second.dist_correction;
-#ifdef HAVE_NEW_YAMLCPP
-    if (node[TWO_PT_CORRECTION_AVAILABLE])
-      node[TWO_PT_CORRECTION_AVAILABLE] >>
-        correction.second.two_pt_correction_available;
-#else
-    if (const YAML::Node *pName = node.FindValue(TWO_PT_CORRECTION_AVAILABLE))
-      *pName >> correction.second.two_pt_correction_available;
-#endif
-    else
-      correction.second.two_pt_correction_available = false;
-    node[DIST_CORRECTION_X] >> correction.second.dist_correction_x;
-    node[DIST_CORRECTION_Y] >> correction.second.dist_correction_y;
-    node[VERT_OFFSET_CORRECTION] >> correction.second.vert_offset_correction;
-    node[HORIZ_OFFSET_CORRECTION] >> correction.second.horiz_offset_correction;
-#ifdef HAVE_NEW_YAMLCPP
-    if (node[MAX_INTENSITY])
-      node[MAX_INTENSITY] >> correction.second.max_intensity;
-#else
-    if (const YAML::Node *pName = node.FindValue(MAX_INTENSITY))
-      *pName >> correction.second.max_intensity;
-#endif
-    else
-      correction.second.max_intensity = 255;
-#ifdef HAVE_NEW_YAMLCPP
-    if (node[MIN_INTENSITY])
-      node[MIN_INTENSITY] >> correction.second.min_intensity;
-#else
-    if (const YAML::Node *pName = node.FindValue(MIN_INTENSITY))
-      *pName >> correction.second.min_intensity;
-#endif
-    else
-      correction.second.min_intensity = 0;
-    node[FOCAL_DISTANCE] >> correction.second.focal_distance;
-    node[FOCAL_SLOPE] >> correction.second.focal_slope;
 
+    node[VERT_CORRECTION] >> correction.second.vert_correction;
+   
     // Calculate cached values
-    correction.second.cos_rot_correction =
-      cosf(correction.second.rot_correction);
-    correction.second.sin_rot_correction =
-      sinf(correction.second.rot_correction);
     correction.second.cos_vert_correction =
       cosf(correction.second.vert_correction);
     correction.second.sin_vert_correction =
@@ -156,30 +105,8 @@ namespace velodyne_pointcloud
   {
     out << YAML::BeginMap;
     out << YAML::Key << LASER_ID << YAML::Value << correction.first;
-    out << YAML::Key << ROT_CORRECTION <<
-      YAML::Value << correction.second.rot_correction;
     out << YAML::Key << VERT_CORRECTION <<
       YAML::Value << correction.second.vert_correction;
-    out << YAML::Key << DIST_CORRECTION <<
-      YAML::Value << correction.second.dist_correction;
-    out << YAML::Key << TWO_PT_CORRECTION_AVAILABLE <<
-      YAML::Value << correction.second.two_pt_correction_available;
-    out << YAML::Key << DIST_CORRECTION_X <<
-      YAML::Value << correction.second.dist_correction_x;
-    out << YAML::Key << DIST_CORRECTION_Y <<
-      YAML::Value << correction.second.dist_correction_y;
-    out << YAML::Key << VERT_OFFSET_CORRECTION <<
-      YAML::Value << correction.second.vert_offset_correction;
-    out << YAML::Key << HORIZ_OFFSET_CORRECTION <<
-      YAML::Value << correction.second.horiz_offset_correction;
-    out << YAML::Key << MAX_INTENSITY <<
-      YAML::Value << correction.second.max_intensity;
-    out << YAML::Key << MIN_INTENSITY <<
-      YAML::Value << correction.second.min_intensity;
-    out << YAML::Key << FOCAL_DISTANCE <<
-      YAML::Value << correction.second.focal_distance;
-    out << YAML::Key << FOCAL_SLOPE <<
-      YAML::Value << correction.second.focal_slope;
     out << YAML::EndMap;
     return out;
   }

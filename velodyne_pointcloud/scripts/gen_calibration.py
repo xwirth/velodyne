@@ -123,30 +123,6 @@ else:
 calibration['num_lasers'] = num_enabled
 print(str(num_enabled) + ' lasers')
 
-# add minimum laser intensities
-minIntensities = db.find('DB/minIntensity_')
-if minIntensities != None:
-    index = 0
-    for el in minIntensities:
-        if el.tag == 'item':
-            if enabled_lasers[index]:
-                value = int(el.text)
-                if value != 0:
-                    addLaserCalibration(index, 'min_intensity', value)
-            index += 1
-
-# add maximum laser intensities
-maxIntensities = db.find('DB/maxIntensity_')
-if maxIntensities != None:
-    index = 0
-    for el in maxIntensities:
-        if el.tag == 'item':
-            if enabled_lasers[index]:
-                value = int(el.text)
-                if value != 255:
-                    addLaserCalibration(index, 'max_intensity', value)
-                index += 1
-
 # add calibration information for each laser
 for el in db.find('DB/points_'):
     if el.tag == 'item':
@@ -158,32 +134,9 @@ for el in db.find('DB/points_'):
                         break   # skip this laser, it is not enabled
                     addLaserCalibration(index, 'laser_id', index)
 
-                if field.tag == 'rotCorrection_':
-                    addLaserCalibration(index, 'rot_correction',
-                                        math.radians(float(field.text)))
                 elif field.tag == 'vertCorrection_':
                     addLaserCalibration(index, 'vert_correction',
                                         math.radians(float(field.text)))
-                elif field.tag == 'distCorrection_':
-                    addLaserCalibration(index, 'dist_correction', 
-                                        float(field.text) * cm2meters)
-                elif field.tag == 'distCorrectionX_':
-                    addLaserCalibration(index, 'dist_correction_x',
-                                        float(field.text) * cm2meters)
-                elif field.tag == 'distCorrectionY_':
-                    addLaserCalibration(index, 'dist_correction_y',
-                                        float(field.text) * cm2meters)
-                elif field.tag == 'vertOffsetCorrection_':
-                    addLaserCalibration(index, 'vert_offset_correction',
-                                        float(field.text) * cm2meters)
-                elif field.tag == 'horizOffsetCorrection_':
-                    addLaserCalibration(index, 'horiz_offset_correction',
-                                        float(field.text) * cm2meters)
-                elif field.tag == 'focalDistance_':
-                    addLaserCalibration(index, 'focal_distance', 
-                                        float(field.text) * cm2meters)
-                elif field.tag == 'focalSlope_':
-                    addLaserCalibration(index, 'focal_slope', float(field.text))
 
 # validate input data
 if calibration['num_lasers'] <= 0:
