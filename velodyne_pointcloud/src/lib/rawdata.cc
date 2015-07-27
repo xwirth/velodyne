@@ -121,15 +121,7 @@ namespace velodyne_rawdata
     float azimuth_corrected_f;
     int azimuth_corrected;
     float x, y, z;
-    float intensity;
     uint8_t dsr;
-    union {
-		  struct {
-			  uint32_t lsb;
-			  uint32_t msb;
-		  };
-		  uint64_t val;
-	  } stp;
 	  
     const raw_packet_t *raw = (const raw_packet_t *) &pkt.data[0];
 
@@ -153,7 +145,7 @@ namespace velodyne_rawdata
           tmp.bytes[0] = raw->blocks[block].data[k];
           tmp.bytes[1] = raw->blocks[block].data[k+1];
           
-		  float timing = ((float) dsr * VLP16_DSR_TOFFSET) + ((float) firing * VLP16_FIRING_TOFFSET);
+		  float timing = (float(dsr) * VLP16_DSR_TOFFSET) + (float(firing) * VLP16_FIRING_TOFFSET);
           
           /** correct for the laser rotation as a function of timing during the firings **/
           azimuth_corrected_f = azimuth + (azimuth_diff * timing / VLP16_BLOCK_TDURATION);
@@ -179,29 +171,18 @@ namespace velodyne_rawdata
             // does this.
             z = distance * corrections.sin_vert_correction;
     
-            intensity = raw->blocks[block].data[k+2];
-    
             if (pointInRange(distance)) {
     
               // convert polar coordinates to Euclidean XYZ
               VPoint point;
               point.ring = corrections.laser_ring;
-              union {
-				  struct {
-					  uint32_t lsb;
-					  uint32_t msb;
-				  };
-				  uint64_t val;
-			  } stp;
-              stp.val = pkt.stamp.toNSec() + ((unsigned int)round((timing + (float) BLOCKS_PER_PACKET * 110.592f) * 1000));
-              point.stampLsb = stp.lsb;
-              point.stampMsb = stp.msb;
+              point.stamp = pkt.stamp.toSec() + ((double (timing) + double(block) * 110.592) * 0.0000001);
               
               /** Use standard ROS coordinate system (right-hand rule) */
               point.x = y;
               point.y = -x;
               point.z = z;
-              point.intensity = (uint8_t) intensity;
+              point.intensity = raw->blocks[block].data[k+2];
     
               // append this point to the cloud
               pc.points.push_back(point);
