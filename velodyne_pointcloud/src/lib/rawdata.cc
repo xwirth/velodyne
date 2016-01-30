@@ -121,7 +121,6 @@ namespace velodyne_rawdata
     float azimuth_corrected_f;
     int azimuth_corrected;
     float x, y, z;
-    uint8_t dsr;
 	  
     const raw_packet_t *raw = (const raw_packet_t *) &pkt.data[0];
 
